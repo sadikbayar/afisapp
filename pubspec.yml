@@ -1,0 +1,39 @@
+name: cps_afis_olusturucu
+description: "CPS Gayrimenkul için profesyonel emlak afişi oluşturucu mobil uygulama."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Fotoğraf / logo seçimi (galeri)
+  image_picker: ^1.1.2
+
+  # Arka plan ve vurgu rengi seçici (renk paleti + HSV çember)
+  flutter_colorpicker: ^1.1.0
+
+  # Oluşan afişi cihaz galerisine kaydetmek için
+  gal: ^2.3.0
+
+  # Fiyatı "4.200.000" gibi biçimlendirmek için
+  intl: ^0.19.0
+
+  # Afişi paylaşmak (WhatsApp, Instagram vb.) için opsiyonel
+  share_plus: ^10.1.2
+
+  # Geçici dosya klasörü (paylaşım için PNG'yi diske yazarken)
+  path_provider: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
