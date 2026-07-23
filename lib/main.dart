@@ -645,24 +645,24 @@ class PosterCanvas extends StatelessWidget {
       color: veri.bgColor,
       child: Stack(
         children: [
-          // Ana dış mekan fotoğrafı
+          // ─── Ana dış mekan fotoğrafı ───
           if (veri.anaFoto != null)
             SizedBox(
-              width: 1200,
-              height: 950,
+              width: 1080,
+              height: 580,
               child: Image.memory(
                 veri.anaFoto!,
                 fit: BoxFit.cover,
-                alignment: const Alignment(0, -0.4),
+                alignment: const Alignment(0, -0.35),
               ),
             ),
 
-          // Fotoğrafın altına hafif bir gölge geçişi (metin okunurluğu için)
+          // Fotoğraftan arka plana yumuşak geçiş
           Positioned(
-            top: 780,
+            top: 470,
             left: 0,
             right: 0,
-            height: 170,
+            height: 110,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -674,89 +674,104 @@ class PosterCanvas extends StatelessWidget {
             ),
           ),
 
-          // Logo
+          // ─── Logo ───
           if (veri.logo != null)
             Positioned(
-              top: 40,
-              left: 50,
+              top: 28,
+              left: 36,
               child: Container(
-                width: 160,
-                height: 160,
+                width: 115,
+                height: 115,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
-                  border: Border.all(color: veri.accentColor, width: 4),
+                  border: Border.all(color: veri.accentColor, width: 3.5),
                   boxShadow: const [
-                    BoxShadow(color: Colors.black45, blurRadius: 14, offset: Offset(0, 6)),
+                    BoxShadow(
+                      color: Colors.black45,
+                      blurRadius: 12,
+                      offset: Offset(0, 5),
+                    ),
                   ],
                 ),
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(7),
                 child: ClipOval(
                   child: Image.memory(veri.logo!, fit: BoxFit.cover),
                 ),
               ),
             ),
 
-          // Şirket adı
+          // ─── Şirket adı ───
           Positioned(
-            top: 70,
-            left: veri.logo != null ? 230 : 60,
-            right: 40,
+            top: 52,
+            left: veri.logo != null ? 168 : 42,
+            right: 36,
             child: Text(
               veri.sirket,
               style: TextStyle(
-                fontSize: 62,
+                fontSize: 48,
                 fontWeight: FontWeight.w900,
                 color: veri.accentColor,
-                shadows: const [Shadow(color: Colors.black54, blurRadius: 10)],
+                shadows: const [
+                  Shadow(color: Colors.black54, blurRadius: 8),
+                ],
               ),
             ),
           ),
 
-          // Başlık / Fiyat / Özellikler
+          // ─── Başlık + Fiyat + Özellikler ───
           Positioned(
-            top: 990,
-            left: 60,
-            right: 60,
+            top: 610,
+            left: 42,
+            right: 42,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Başlık
                 Text(
                   veri.baslik,
                   style: TextStyle(
-                    fontSize: 62,
+                    fontSize: 44,
                     fontWeight: FontWeight.w900,
                     color: veri.textColor,
-                    height: 1.18,
+                    height: 1.2,
                   ),
                 ),
-                const SizedBox(height: 26),
+                const SizedBox(height: 18),
+
+                // Fiyat
                 Text(
                   '₺$_fiyatFormatli',
                   style: TextStyle(
-                    fontSize: 96,
+                    fontSize: 68,
                     fontWeight: FontWeight.w900,
                     color: veri.accentColor,
-                    shadows: const [Shadow(color: Colors.black45, blurRadius: 8)],
+                    shadows: const [
+                      Shadow(color: Colors.black45, blurRadius: 6),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
+
+                // Altın çizgi
                 Container(
-                  width: 140,
-                  height: 6,
+                  width: 110,
+                  height: 5,
                   color: veri.accentColor,
-                  margin: const EdgeInsets.only(bottom: 26),
+                  margin: const EdgeInsets.only(bottom: 18),
                 ),
+
+                // Özellikler
                 ...veri.ozellikler.map(
                   (o) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.only(bottom: 11),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 10, right: 14),
-                          width: 12,
-                          height: 12,
+                          margin: const EdgeInsets.only(top: 9, right: 12),
+                          width: 10,
+                          height: 10,
                           decoration: BoxDecoration(
                             color: veri.accentColor,
                             shape: BoxShape.circle,
@@ -765,7 +780,11 @@ class PosterCanvas extends StatelessWidget {
                         Expanded(
                           child: Text(
                             o,
-                            style: TextStyle(fontSize: 40, color: veri.textColor),
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: veri.textColor,
+                              height: 1.25,
+                            ),
                           ),
                         ),
                       ],
@@ -776,22 +795,26 @@ class PosterCanvas extends StatelessWidget {
             ),
           ),
 
-          // İç mekan fotoğrafları
+          // ─── İç mekan fotoğrafları ───
           if (veri.icFotolar.isNotEmpty)
             Positioned(
-              bottom: 100,
-              left: 60,
-              right: 60,
-              height: 190,
+              bottom: 88,
+              left: 42,
+              right: 42,
+              height: 140,
               child: Row(
                 children: veri.icFotolar
                     .map(
                       (f) => Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 14),
+                          padding: const EdgeInsets.only(right: 10),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(14),
-                            child: Image.memory(f, fit: BoxFit.cover, height: 190),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.memory(
+                              f,
+                              fit: BoxFit.cover,
+                              height: 140,
+                            ),
                           ),
                         ),
                       ),
@@ -800,23 +823,23 @@ class PosterCanvas extends StatelessWidget {
               ),
             ),
 
-          // Alt iletişim bandı
+          // ─── Alt iletişim bandı ───
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
-            height: 90,
+            height: 78,
             child: Container(
               color: const Color(0xFF111133),
-              padding: const EdgeInsets.symmetric(horizontal: 60),
+              padding: const EdgeInsets.symmetric(horizontal: 42),
               child: Row(
                 children: [
-                  Icon(Icons.phone, color: veri.accentColor, size: 34),
-                  const SizedBox(width: 14),
+                  Icon(Icons.phone, color: veri.accentColor, size: 28),
+                  const SizedBox(width: 12),
                   Text(
                     veri.telefon,
                     style: TextStyle(
-                      fontSize: 38,
+                      fontSize: 30,
                       fontWeight: FontWeight.w700,
                       color: veri.accentColor,
                     ),
@@ -825,8 +848,8 @@ class PosterCanvas extends StatelessWidget {
                   Text(
                     veri.danisman,
                     style: TextStyle(
-                      fontSize: 34,
-                      color: veri.accentColor.withOpacity(0.9),
+                      fontSize: 26,
+                      color: veri.accentColor.withOpacity(0.92),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
