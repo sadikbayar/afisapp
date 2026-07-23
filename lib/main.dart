@@ -255,8 +255,8 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
     try {
       final Uint8List pngBytes = await _widgetiGoruntuyeDonustur(
         PosterCanvas(veri: _veri),
-        const Size(1200, 1900),
-        pixelRatio: 2.2, // yüksek çözünürlük / baskı kalitesi
+        const Size(1080, 1350),
+        pixelRatio: 2.5, // yüksek çözünürlük / baskı kalitesi
       );
 
       if (!mounted) return;
