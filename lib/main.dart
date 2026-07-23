@@ -1,15 +1,14 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gal/gal.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const CPSAfisApp());
@@ -86,9 +85,9 @@ class AfisVerisi {
   String telefon;
   String danisman;
   List<String> ozellikler;
-  File? anaFoto;
-  File? logo;
-  List<File> icFotolar;
+  Uint8List? anaFoto;
+  Uint8List? logo;
+  List<Uint8List> icFotolar;
   Color bgColor;
   Color accentColor;
   Color textColor;
@@ -102,7 +101,7 @@ class AfisVerisi {
     List<String>? ozellikler,
     this.anaFoto,
     this.logo,
-    List<File>? icFotolar,
+    List<Uint8List>? icFotolar,
     this.bgColor = const Color(0xFF0A0A1F),
     this.accentColor = const Color(0xFFF1C40F),
     this.textColor = Colors.white,
@@ -146,11 +145,12 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
     final XFile? secilen =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 95);
     if (secilen == null) return;
+    final bytes = await secilen.readAsBytes();
     setState(() {
       if (anaFoto) {
-        _veri.anaFoto = File(secilen.path);
+        _veri.anaFoto = bytes;
       } else {
-        _veri.logo = File(secilen.path);
+        _veri.logo = bytes;
       }
     });
   }
@@ -162,11 +162,12 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
     }
     final List<XFile> secilenler = await _picker.pickMultiImage(imageQuality: 90);
     if (secilenler.isEmpty) return;
+    final kalanYer = 4 - _veri.icFotolar.length;
+    final secilenBytes = await Future.wait(
+      secilenler.take(kalanYer).map((x) => x.readAsBytes()),
+    );
     setState(() {
-      final kalanYer = 4 - _veri.icFotolar.length;
-      _veri.icFotolar.addAll(
-        secilenler.take(kalanYer).map((x) => File(x.path)),
-      );
+      _veri.icFotolar.addAll(secilenBytes);
     });
   }
 
@@ -410,7 +411,7 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
+                                child: Image.memory(
                                   _veri.icFotolar[i],
                                   width: 84,
                                   height: 84,
@@ -525,7 +526,7 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
   Widget _fotoSeciciSatiri({
     required String baslik,
     required bool zorunlu,
-    required File? dosya,
+    required Uint8List? dosya,
     required VoidCallback onSec,
     required VoidCallback onSil,
   }) {
@@ -534,7 +535,7 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: dosya != null
-              ? Image.file(dosya, width: 64, height: 64, fit: BoxFit.cover)
+              ? Image.memory(dosya, width: 64, height: 64, fit: BoxFit.cover)
               : Container(
                   width: 64,
                   height: 64,
@@ -649,7 +650,7 @@ class PosterCanvas extends StatelessWidget {
             SizedBox(
               width: 1200,
               height: 950,
-              child: Image.file(
+              child: Image.memory(
                 veri.anaFoto!,
                 fit: BoxFit.cover,
                 alignment: const Alignment(0, -0.4),
@@ -691,7 +692,7 @@ class PosterCanvas extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ClipOval(
-                  child: Image.file(veri.logo!, fit: BoxFit.cover),
+                  child: Image.memory(veri.logo!, fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -790,7 +791,7 @@ class PosterCanvas extends StatelessWidget {
                           padding: const EdgeInsets.only(right: 14),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(14),
-                            child: Image.file(f, fit: BoxFit.cover, height: 190),
+                            child: Image.memory(f, fit: BoxFit.cover, height: 190),
                           ),
                         ),
                       ),
@@ -854,6 +855,25 @@ class _AfisOnizlemeSayfasiState extends State<AfisOnizlemeSayfasi> {
 
   Future<void> _galeriyeKaydet() async {
     setState(() => _kaydediliyor = true);
+    if (kIsWeb) {
+      // Web'de "galeri" kavramı yok; dosyayı indirme/paylaşma penceresiyle sunuyoruz.
+      try {
+        final dosya = XFile.fromData(
+          widget.pngBytes,
+          mimeType: 'image/png',
+          name: 'cps_afis_${DateTime.now().millisecondsSinceEpoch}.png',
+        );
+        await Share.shareXFiles([dosya], text: 'CPS Gayrimenkul Afişi');
+        setState(() {
+          _kaydediliyor = false;
+          _kaydedildi = true;
+        });
+      } catch (e) {
+        setState(() => _kaydediliyor = false);
+        _mesaj('İndirme sırasında hata: $e', hata: true);
+      }
+      return;
+    }
     try {
       final izinVar = await Gal.hasAccess();
       if (!izinVar) {
@@ -880,10 +900,12 @@ class _AfisOnizlemeSayfasiState extends State<AfisOnizlemeSayfasi> {
   }
 
   Future<void> _paylas() async {
-    final dizin = await getTemporaryDirectory();
-    final dosya = File('${dizin.path}/cps_afis_paylasim.png');
-    await dosya.writeAsBytes(widget.pngBytes);
-    await Share.shareXFiles([XFile(dosya.path)], text: 'CPS Gayrimenkul İlanı');
+    final dosya = XFile.fromData(
+      widget.pngBytes,
+      mimeType: 'image/png',
+      name: 'cps_afis_paylasim.png',
+    );
+    await Share.shareXFiles([dosya], text: 'CPS Gayrimenkul İlanı');
   }
 
   void _mesaj(String metin, {bool hata = false}) {
