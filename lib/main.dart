@@ -121,13 +121,13 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
   final _picker = ImagePicker();
 
   final _baslikCtrl = TextEditingController(
-      text: "ESKİŞEHİR FATİH MAHALLESİ'NDE\nKAÇIRILMAYACAK FIRSAT DAİRE!");
+      text: "");
   final _fiyatCtrl = TextEditingController(text: '4200000');
-  final _telefonCtrl = TextEditingController(text: '0554 837 20 26');
-  final _danismanCtrl = TextEditingController(text: 'Emre Destici');
+  final _telefonCtrl = TextEditingController(text: '');
+  final _danismanCtrl = TextEditingController(text: '');
   final _ozelliklerCtrl = TextEditingController(
       text:
-          'Asansörlü bina\n2 adet balkon\nYeni boya badana\nGüneş alan daire\nKapalı garaj\nKamera sistemi\nİskanlı tapu');
+          '');
 
   bool _uretiliyor = false;
 
@@ -156,13 +156,13 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
   }
 
   Future<void> _icFotoEkle() async {
-    if (_veri.icFotolar.length >= 4) {
-      _mesajGoster('En fazla 4 iç mekan fotoğrafı ekleyebilirsiniz.');
+    if (_veri.icFotolar.length >= 10) {
+      _mesajGoster('En fazla 10 iç mekan fotoğrafı ekleyebilirsiniz.');
       return;
     }
     final List<XFile> secilenler = await _picker.pickMultiImage(imageQuality: 90);
     if (secilenler.isEmpty) return;
-    final kalanYer = 4 - _veri.icFotolar.length;
+    final kalanYer = 10 - _veri.icFotolar.length;
     final secilenBytes = await Future.wait(
       secilenler.take(kalanYer).map((x) => x.readAsBytes()),
     );
@@ -389,7 +389,7 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
                         children: [
                           const Expanded(
                             child: Text(
-                              'İç Mekan Fotoğrafları (max 4)',
+                              'İç Mekan Fotoğrafları (max 10)',
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
