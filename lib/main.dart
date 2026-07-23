@@ -603,7 +603,7 @@ Future<Uint8List> _widgetiGoruntuyeDonustur(
   final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
     container: repaintBoundary,
     child: Directionality(
-      textDirection: TextDirection.ltr,
+      textDirection: ui.TextDirection.ltr,
       child: MediaQuery(
         data: MediaQueryData(size: boyut, devicePixelRatio: pixelRatio),
         child: SizedBox(width: boyut.width, height: boyut.height, child: widget),
