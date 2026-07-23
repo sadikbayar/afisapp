@@ -640,8 +640,8 @@ class PosterCanvas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 1200,
-      height: 1900,
+      width: 1080,
+      height: 1350,
       color: veri.bgColor,
       child: Stack(
         children: [
