@@ -122,7 +122,7 @@ class _AfisOlusturucuSayfasiState extends State<AfisOlusturucuSayfasi> {
 
   final _baslikCtrl = TextEditingController(
       text: "");
-  final _fiyatCtrl = TextEditingController(text: '4200000');
+  final _fiyatCtrl = TextEditingController(text: '');
   final _telefonCtrl = TextEditingController(text: '');
   final _danismanCtrl = TextEditingController(text: '');
   final _ozelliklerCtrl = TextEditingController(
