@@ -883,9 +883,7 @@ class _AfisOnizlemeSayfasiState extends State<AfisOnizlemeSayfasi> {
     final dizin = await getTemporaryDirectory();
     final dosya = File('${dizin.path}/cps_afis_paylasim.png');
     await dosya.writeAsBytes(widget.pngBytes);
-    await SharePlus.instance.share(
-      ShareParams(files: [XFile(dosya.path)], text: 'CPS Gayrimenkul İlanı'),
-    );
+    await Share.shareXFiles([XFile(dosya.path)], text: 'CPS Gayrimenkul İlanı');
   }
 
   void _mesaj(String metin, {bool hata = false}) {
